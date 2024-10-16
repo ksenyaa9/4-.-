@@ -49,7 +49,7 @@ namespace _1_лаба
                 errors.AppendLine("Укажите длительность услуги");
             }
 
-            
+            //уфыасу
 
 
             if ((_currentServise.Discount <0 || _currentServise.Discount>100) || Disc.Text.Length < 1)
