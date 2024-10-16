@@ -16,8 +16,7 @@ namespace _1_лаба
     public partial class Gerasimova_AvtoservicEntities : DbContext
     {
 
-        //добавлено
-        public static Gerasimova_AvtoservicEntities _context;
+        private static Gerasimova_AvtoservicEntities _context;
 
         public static Gerasimova_AvtoservicEntities GetContext()
         {
@@ -25,9 +24,6 @@ namespace _1_лаба
                 _context = new Gerasimova_AvtoservicEntities();
             return _context;
         }
-        //добавлено
-
-
         public Gerasimova_AvtoservicEntities()
             : base("name=Gerasimova_AvtoservicEntities")
         {
