@@ -22,12 +22,17 @@ namespace _1_лаба
     {
 
         private Service _currentServise = new Service();
+
+        private int edit = 0;
         public AddEditPage( Service SelectedService)
         {
             InitializeComponent();
 
             if (SelectedService != null)
+            {
                 _currentServise = SelectedService;
+                edit = 1;
+            }
 
             DataContext = _currentServise;
         }
@@ -44,15 +49,24 @@ namespace _1_лаба
                 errors.AppendLine("Укажите стоимость услуги");
             }
 
-            if (string.IsNullOrWhiteSpace(_currentServise.DurationInSeconds))
+
+            if ( _currentServise.DurationInSeconds < 0 && _currentServise.DurationInSeconds>240)
+            {
+                errors.AppendLine("Длительность не может быть больше 240 минут или меньше 0 ");
+            }
+           
+
+
+            
+            /*if (string.IsNullOrWhiteSpace(_currentServise.DurationInSeconds))
             {
                 errors.AppendLine("Укажите длительность услуги");
             }
-
+            */
             //уфыасу
 
 
-            if ((_currentServise.Discount <0 || _currentServise.Discount>100) || Disc.Text.Length < 1)
+            if ((_currentServise.DiscountInt <0 || _currentServise.DiscountInt>100) || Disc.Text.Length < 1)
             {
                 errors.AppendLine("Укажите скидку");
             }
@@ -62,23 +76,37 @@ namespace _1_лаба
                 MessageBox.Show(errors.ToString());
                 return;
             }
+
+            //проверка существует ли такая услуга
             
-            if(_currentServise.ID == 0)
-            {
-                Gerasimova_AvtoservicEntities.GetContext().Service.Add(_currentServise);
-            }
+            var allServices = Gerasimova_AvtoservicEntities.GetContext().Service.ToList();
+            allServices = allServices.Where(p => p.Title == _currentServise.Title).ToList();
 
-            try
+            if (allServices.Count == 0 || edit == 1)
             {
-                Gerasimova_AvtoservicEntities.GetContext().SaveChanges();
-                MessageBox.Show("информация сохранена");
-                Manager.MainFrame.GoBack();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-            }
+                if (_currentServise.ID == 0)
+                {
+                    Gerasimova_AvtoservicEntities.GetContext().Service.Add(_currentServise);
+                }
 
+                try
+                {
+                    Gerasimova_AvtoservicEntities.GetContext().SaveChanges();
+                    MessageBox.Show("информация сохранена");
+                    Manager.MainFrame.GoBack();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString());
+                }
+            }
+            else
+            {
+                
+                    MessageBox.Show("Уже существует такая услуга");
+                
+                
+            }
 
 
         }

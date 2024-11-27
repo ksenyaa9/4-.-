@@ -17,7 +17,6 @@ namespace _1_лаба
     {
 
         private static Gerasimova_AvtoservicEntities _context;
-
         public static Gerasimova_AvtoservicEntities GetContext()
         {
             if (_context == null)

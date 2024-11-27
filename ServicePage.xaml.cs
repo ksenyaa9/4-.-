@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _1_лаба;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace _1_лаба
 {
+
+
     /// <summary>
     /// Логика взаимодействия для ServicePage.xaml
     /// </summary>
     public partial class ServicePage : Page
     {
+
+        int CountRecords;
+        int CountPage;
+        int CurrentPage = 0;
+
+        List<Service> CurrentPageList = new List<Service>();
+        List<Service> TableList;
         public ServicePage()
         {
             InitializeComponent();
@@ -29,9 +40,12 @@ namespace _1_лаба
             //связь с нашим листвью
             ServiceListView.ItemsSource = currentServices;
 
-            ComboType.SelectedIndex = 0;
+            
 
+            ComboType.SelectedIndex = 0;
             UpdateServices();
+
+
         }
 
 
@@ -39,35 +53,35 @@ namespace _1_лаба
         private void UpdateServices()
         {
             var currentServices = Gerasimova_AvtoservicEntities.GetContext().Service.ToList();
-            if(ComboType.SelectedIndex == 0)
+            if (ComboType.SelectedIndex == 0)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 0 && Convert.ToInt32(p.Discount) <= 100)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 0 && Convert.ToInt32(p.DiscountInt) <= 100)).ToList();
 
             }
             if (ComboType.SelectedIndex == 1)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 0 && Convert.ToInt32(p.Discount) < 5)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 0 && Convert.ToInt32(p.DiscountInt) < 5)).ToList();
 
             }
 
             if (ComboType.SelectedIndex == 2)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 5 && Convert.ToInt32(p.Discount) < 15)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 5 && Convert.ToInt32(p.DiscountInt) < 15)).ToList();
 
             }
             if (ComboType.SelectedIndex == 3)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 15 && Convert.ToInt32(p.Discount) < 30)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 15 && Convert.ToInt32(p.DiscountInt) < 30)).ToList();
 
             }
             if (ComboType.SelectedIndex == 4)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 30 && Convert.ToInt32(p.Discount) < 70)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 30 && Convert.ToInt32(p.DiscountInt) < 70)).ToList();
 
             }
             if (ComboType.SelectedIndex == 5)
             {
-                currentServices = currentServices.Where(p => (Convert.ToInt32(p.Discount) >= 70 && Convert.ToInt32(p.Discount) < 100)).ToList();
+                currentServices = currentServices.Where(p => (Convert.ToInt32(p.DiscountInt) >= 70 && Convert.ToInt32(p.DiscountInt) < 100)).ToList();
 
             }
 
@@ -75,23 +89,123 @@ namespace _1_лаба
 
             currentServices = currentServices.Where(p => p.Title.ToLower().Contains(TBoxSearch.Text.ToLower())).ToList();
 
-            ServiceListView.ItemsSource = currentServices.ToList();
+            //ServiceListView.ItemsSource = currentServices.ToList();
 
             if (RadioButtonDown.IsChecked.Value)
             {
-                ServiceListView.ItemsSource = currentServices.OrderByDescending(p => p.Cost).ToList();
+                currentServices = currentServices.OrderByDescending(p => p.Cost).ToList();
 
             }
 
             if (RadioButtonUp.IsChecked.Value)
             {
-                ServiceListView.ItemsSource = currentServices.OrderBy(p => p.Cost).ToList();
+                currentServices = currentServices.OrderBy(p => p.Cost).ToList();
 
             }
 
-        } 
 
-        
+
+            ServiceListView.ItemsSource = currentServices;
+
+            TableList = currentServices;
+
+            ChagePage(0, 0);
+
+        }
+
+
+        private void ChagePage(int direction, int? selectedPage)
+        {
+
+            CurrentPageList.Clear();
+            CountRecords = TableList.Count;
+
+            if (CountRecords % 10 > 0)
+            {
+                CountPage = CountRecords / 10 + 1;
+            }
+            else
+            {
+                CountPage = CountRecords / 10;
+            }
+
+            Boolean Ifupdate = true;
+
+            int min;
+
+            if (selectedPage.HasValue)
+            {
+                if (selectedPage >= 0 && selectedPage <= CountPage)
+                {
+                    CurrentPage = (int)selectedPage;
+                    min = CurrentPage * 10 + 10 < CountRecords ? CurrentPage * 10 + 10 : CountRecords;
+                    for (int i = CurrentPage * 10; i < min; i++)
+                    {
+                        CurrentPageList.Add(TableList[i]);
+                    }
+                }
+            }
+            else
+            {
+                switch (direction)
+                {
+                    case 1:
+                        if (CurrentPage > 0)
+                        {
+                            CurrentPage--;
+                            min = CurrentPage * 10 + 10 < CountRecords ? CurrentPage * 10 + 10 : CountRecords;
+                            for (int i = CurrentPage * 10; i < min; i++)
+                            {
+                                CurrentPageList.Add(TableList[i]);
+                            }
+                        }
+                        else
+                        {
+                            Ifupdate = false;
+                        }
+                        break;
+
+                    case 2:
+                        if (CurrentPage < CountPage - 1)
+                        {
+                            CurrentPage++;
+                            min = CurrentPage * 10 + 10 < CountRecords ? CurrentPage * 10 + 10 : CountRecords;
+                            for (int i = CurrentPage * 10; i < min; i++)
+                            {
+                                CurrentPageList.Add(TableList[i]);
+                            }
+                        }
+                        else
+                        {
+                            Ifupdate = false;
+                        }
+                        break;
+
+                }
+            }
+
+
+            if (Ifupdate)
+            {
+                PageListBox.Items.Clear();
+                for (int i = 1; i <= CountPage; i++)
+                {
+                    PageListBox.Items.Add(i);
+                }
+                PageListBox.SelectedIndex = CurrentPage;
+
+                min = CurrentPage * 10 + 10 < CountRecords ? CurrentPage * 10 + 10 : CountRecords;
+                TBCount.Text = min.ToString();
+                TBAllRecords.Text = " из " + CountRecords.ToString();
+
+                ServiceListView.ItemsSource = CurrentPageList;
+
+                ServiceListView.Items.Refresh();
+            }
+
+
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Manager.MainFrame.Navigate(new AddEditPage(null));
@@ -133,14 +247,75 @@ namespace _1_лаба
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if(Visibility == Visibility.Visible)
+            if (Visibility == Visibility.Visible)
             {
                 Gerasimova_AvtoservicEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
                 ServiceListView.ItemsSource = Gerasimova_AvtoservicEntities.GetContext().Service.ToList();
+                UpdateServices();
 
             }
 
 
         }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var currentServices = (sender as Button).DataContext as Service;
+            //проверка
+            var currentClientServices = Gerasimova_AvtoservicEntities.GetContext().ClientService.ToList();
+            currentClientServices = currentClientServices.Where(p => p.ServiceID == currentServices.ID).ToList();
+
+            if (currentClientServices.Count != 0)
+                MessageBox.Show("Невозможно выполнить удаление, так как существуют записи на эту услугу");
+            else
+            {
+
+                if (MessageBox.Show("Вы точно хотите выполнить удаление?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        Gerasimova_AvtoservicEntities.GetContext().Service.Remove(currentServices);
+                        Gerasimova_AvtoservicEntities.GetContext().SaveChanges();
+
+                        ServiceListView.ItemsSource = Gerasimova_AvtoservicEntities.GetContext().Service.ToList();
+                        UpdateServices();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message.ToString());
+
+                    }
+                }
+            }
+        }
+
+
+        private void LeftDirButton_Click(object sender, RoutedEventArgs e)
+        {
+            ChagePage(1, null);
+
+        }
+
+        private void RightDirButton_Click(object sender, RoutedEventArgs e)
+        {
+            ChagePage(2, null);
+
+        }
+
+        private void PageListBox_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            ChagePage(0, Convert.ToInt32(PageListBox.SelectedItem.ToString()) - 1);
+
+
+        }
+
+        private void SignUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new SignUpPage((sender as Button).DataContext as Service));
+
+        }
     }
+
+
 }
