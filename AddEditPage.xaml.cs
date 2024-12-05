@@ -49,10 +49,12 @@ namespace _1_лаба
                 errors.AppendLine("Укажите стоимость услуги");
             }
 
-
-            if ( _currentServise.DurationInSeconds < 0 && _currentServise.DurationInSeconds>240)
+            if (edit == 0)
             {
-                errors.AppendLine("Длительность не может быть больше 240 минут или меньше 0 ");
+                if (_currentServise.DurationInSeconds < 0 || _currentServise.DurationInSeconds > 240)
+                {
+                    errors.AppendLine("Длительность не может быть больше 240 минут или меньше 0 ");
+                }
             }
            
 

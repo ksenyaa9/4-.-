@@ -116,9 +116,13 @@ namespace _1_лаба
                 string endHourStr = endHour < 10 ? "0" + endHour.ToString() : endHour.ToString();
                 string endMinStr = endMin < 10 ? "0" + endMin.ToString() : endMin.ToString();
 
-                s = endHourStr.ToString() + ":" + endMinStr.ToString();
+                if (proverka(TBStart.Text))
+                {
 
-              TBEnd.Text = s;
+                    s = endHourStr.ToString() + ":" + endMinStr.ToString();
+
+                    TBEnd.Text = s;
+                }
                 
 
 
@@ -140,6 +144,15 @@ namespace _1_лаба
             return true;
         }
 
+        private void TBTitle_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TBEnd_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
 

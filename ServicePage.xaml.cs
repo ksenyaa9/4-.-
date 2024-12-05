@@ -105,6 +105,7 @@ namespace _1_лаба
 
 
 
+
             ServiceListView.ItemsSource = currentServices;
 
             TableList = currentServices;

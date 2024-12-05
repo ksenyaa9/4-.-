@@ -72,7 +72,7 @@ namespace _1_лаба
                 if (Discount > 0)
                 {
 
-                    return Math.Round(((decimal)Cost - (decimal)Cost * (decimal)Discount / 100),2);
+                    return Math.Round(((decimal)Cost - (decimal)Cost * (decimal)Discount),2);
 
                 }
                 else
